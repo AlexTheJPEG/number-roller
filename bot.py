@@ -25,11 +25,22 @@ async def roll() -> None:
     smallest_number = min(numbers)
     largest_number = max(numbers)
 
+    cond_messages = settings["message"]["cond_messages"]
+
     for index in range(len(users)):
         number = numbers[index]
+
         number_message = settings["message"]["number_message"].replace(r"{number}", str(number))
-        default_message = settings["message"]["default_message"]
-        await channel.send(f"<@{users[index]}> {number_message} {default_message}")
+
+        additional_message = settings["message"]["default_message"]
+        for cm in cond_messages:
+            if number == cm[0]:
+                if cm[2]:
+                    additional_message = cm[1]
+                else:
+                    additional_message += f" {cm[1]}"
+
+        await channel.send(f"<@{users[index]}> {number_message} {additional_message}")
 
 
 bot.run(settings["bot"]["token"])

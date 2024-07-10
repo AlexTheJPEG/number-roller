@@ -26,3 +26,11 @@ number_message = "Your number is {number}."
 
 # The default message that is appended after the number message
 default_message = "Cool!"
+
+# Add specific messages for certain numbers in the following format:
+# [number, message, replace default message?]
+cond_messages = [
+    [1, "Unlucky!", true],
+    [69, "Nice.", false],
+    [1000, "Lucky!", false]
+]
