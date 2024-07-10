@@ -18,3 +18,11 @@ timezone = "UTC"
 # These two should be self explanatory
 min_number = 1
 max_number = 1000
+
+[message]
+# The message to display what number is rolled for a user.
+# Use {number} to denote where the number should go.
+number_message = "Your number is {number}."
+
+# The default message that is appended after the number message
+default_message = "Cool!"

@@ -26,7 +26,10 @@ async def roll() -> None:
     largest_number = max(numbers)
 
     for index in range(len(users)):
-        await channel.send(f"<@{users[index]}> {numbers[index]}")
+        number = numbers[index]
+        number_message = settings["message"]["number_message"].replace(r"{number}", str(number))
+        default_message = settings["message"]["default_message"]
+        await channel.send(f"<@{users[index]}> {number_message} {default_message}")
 
 
 bot.run(settings["bot"]["token"])
