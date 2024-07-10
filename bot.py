@@ -1,9 +1,9 @@
+import random
+from pathlib import Path
+
 import aiocron
 import discord
-import random
 import tomllib
-
-from pathlib import Path
 
 bot = discord.Bot()
 
@@ -17,10 +17,10 @@ async def on_ready() -> None:
 
 
 @aiocron.crontab(settings["bot"]["cron"])
-async def roll():
+async def roll() -> None:
     channel = bot.get_channel(settings["bot"]["channel"])
     users = settings["bot"]["users"]
-    
+
     numbers = [random.randint(settings["roll"]["min_number"], settings["roll"]["max_number"]) for _ in users]
     smallest_number = min(numbers)
     largest_number = max(numbers)
