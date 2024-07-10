@@ -13,3 +13,8 @@ cron = "0 0 * * *"
 
 # The time zone the cron schedule should run on
 timezone = "UTC"
+
+[roll]
+# These two should be self explanatory
+min_number = 1
+max_number = 1000

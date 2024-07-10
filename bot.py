@@ -21,12 +21,12 @@ async def roll():
     channel = bot.get_channel(settings["bot"]["channel"])
     users = settings["bot"]["users"]
     
-    generated_numbers = [random.randint(1, 1000) for _ in users]
-    smallest_number = min(generated_numbers)
-    largest_number = max(generated_numbers)
+    numbers = [random.randint(settings["roll"]["min_number"], settings["roll"]["max_number"]) for _ in users]
+    smallest_number = min(numbers)
+    largest_number = max(numbers)
 
     for index in range(len(users)):
-        await channel.send(f"<@{users[index]}> {generated_numbers[index]}")
+        await channel.send(f"<@{users[index]}> {numbers[index]}")
 
 
 bot.run(settings["bot"]["token"])
