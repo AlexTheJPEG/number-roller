@@ -1,0 +1,15 @@
+[bot]
+# Your bot's token
+token = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+
+# The channel ID the bot should post in
+channel = 1234567890
+
+# The user IDs the bot should roll numbers for
+users = [1234567890, 1234567890, 1234567890, ...]
+
+# The schedule for the rolls in cron syntax
+cron = "0 0 * * *"
+
+# The time zone the cron schedule should run on
+timezone = "UTC"
