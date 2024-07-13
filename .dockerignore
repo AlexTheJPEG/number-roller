@@ -1,5 +1,3 @@
 .ruff_cache
 .pytest_cache
 .python-version
-poetry.locl
-pyproject.toml
