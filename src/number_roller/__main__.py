@@ -14,7 +14,7 @@ async def on_ready() -> None:
     print("Bot is ready!")
 
 
-@aiocron.crontab(settings["bot"]["cron"])
+@aiocron.crontab(settings["bot"]["cron"], tz=settings["bot"]["timezone"])
 async def roll() -> None:
     channel = bot.get_channel(settings["bot"]["channel"])
     users = settings["bot"]["users"]
