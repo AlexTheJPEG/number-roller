@@ -2,6 +2,7 @@ import random
 
 import aiocron
 import discord
+import pytz
 from nr_utils.files import load_bot_settings
 from nr_utils.message import generate_message
 
@@ -14,7 +15,7 @@ async def on_ready() -> None:
     print("Bot is ready!")
 
 
-@aiocron.crontab(settings["bot"]["cron"], tz=settings["bot"]["timezone"])
+@aiocron.crontab(settings["bot"]["cron"], tz=pytz.timezone(settings["bot"]["timezone"]))
 async def roll() -> None:
     channel = bot.get_channel(settings["bot"]["channel"])
     users = settings["bot"]["users"]
