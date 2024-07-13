@@ -28,9 +28,20 @@ number_message = "Your number is {number}."
 default_message = "Cool!"
 
 # Add specific messages for certain numbers in the following format:
-# [number, message, replace default message?]
+# [number, message, be the only message?, stop checking?]
+# - Messages are checked starting from the first item in the list.
+# - If the roll is not equal to the number, it moves on to the next.
+# - If the roll is equal to the number, print the desired message.
+#     - If "be the only message?" is true, it will remove any other existing messages so far.
+#     - If "stop checking?" is true, the bot will stop processing conditional messages.
 cond_messages = [
-    [1, "Unlucky!", true],
-    [69, "Nice.", false],
-    [1000, "Lucky!", false]
+    [1, "Unlucky!", true, true],
+    [69, "Nice.", false, false],
+    [1000, "Lucky!", true, true]
+    ["highest", "You have the highest number.", false, true]
+    ["lowest", "You have the lowest number.", false, true]
 ]
+# To get an idea of what these would print:
+# - "Your number is 1. Unlucky!"
+# - "Your number is 69. Nice. (You have the highest/lowest number.)"
+# - "Your number is 1000. Lucky!"
