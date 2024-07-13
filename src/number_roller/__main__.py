@@ -1,14 +1,12 @@
 import random
-from pathlib import Path
 
 import aiocron
 import discord
-import tomllib
+from nr_utils.files import load_bot_settings
+from nr_utils.message import generate_message
 
 bot = discord.Bot()
-
-with Path("bot_settings.toml").open("rb") as file:
-    settings = tomllib.load(file)
+settings = load_bot_settings()
 
 
 @bot.event
@@ -32,14 +30,8 @@ async def roll() -> None:
 
         number_message = settings["message"]["number_message"].replace(r"{number}", str(number))
 
-        additional_message = settings["message"]["default_message"]
-        for cm in cond_messages:
-            if number == cm[0] or \
-                (cm[0] == "highest" and number == highest_number) or \
-                    (cm[0] == "lowest" and number == lowest_number):
-                additional_message = cm[1] if cm[2] else f"{additional_message} {cm[1]}"
-                if cm[3]:
-                    break
+        default_message = settings["message"]["default_message"]
+        additional_message = generate_message(number, highest_number, lowest_number, default_message, cond_messages)
 
         await channel.send(f"<@{users[index]}> {number_message} {additional_message}")
 
