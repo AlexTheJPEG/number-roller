@@ -3,8 +3,9 @@ import random
 import aiocron
 import discord
 import pytz
-from nr_utils.files import load_bot_settings
-from nr_utils.message import generate_message
+
+from ..nr_utils.files import load_bot_settings
+from ..nr_utils.message import generate_message
 
 bot = discord.Bot()
 settings = load_bot_settings()

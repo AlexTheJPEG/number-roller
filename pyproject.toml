@@ -1,24 +1,21 @@
-[tool.poetry]
+[project]
 name = "number-roller"
-version = "0.1.0"
+version = "0.2.0"
 description = "A Discord bot that rolls numbers on a schedule for you!"
-authors = ["Alex The JPEG"]
 readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aiocron>=1.8",
+    "py-cord>=2.6.1",
+]
 
-[tool.poetry.dependencies]
-python = "^3.12"
-py-cord = "^2.6.0"
-aiocron = "^1.8"
-
-[tool.poetry.group.dev.dependencies]
-ruff = "^0.5.1"
-pytest = "^8.2.2"
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.3.3",
+    "ruff>=0.7.0",
+]
 
 [tool.ruff]
 select = ["E", "F", "W", "I", "N", "ANN", "B", "Q", "PTH", "SIM"]
 ignore = ["ANN101", "ANN002", "ANN003"]
 line-length = 128
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"

@@ -7,16 +7,9 @@ To get started, [create a Discord application](https://discord.com/developers/ap
 
 After you've made your application, clone this repo somewhere on your machine, then create the bot settings file `bot_settings.toml`. An example file has been included in the repo detailing every required setting.
 
-As for dependencies, they are all handled by [Poetry](https://github.com/python-poetry/poetry). Install Poetry on your machine if you haven't already, then simply run `poetry install` in the project directory.
+As for dependencies, they are all handled by [uv](https://github.com/astral-sh/uv). Install uv on your machine if you haven't already, then simply run `uv sync` in the project directory.
 
-To run the bot, activate the virtual environment created by Poetry using `poetry shell` and run `python -m number_roller` in the project directory.
+To run the bot, simply run `uv run python -m src.number_roller`.
 
 ### 🐋 Docker
-You can also run this bot as a Docker container. Simply run the following Docker commands in the root directory:
-```
-docker build . -t number-roller
-docker run number-roller
-```
-
-## 💬 Notes
-An alternative way to run your bot without explicitly activating the virtual environment is by running `poetry run python -m number_roller`. If you're running the bot on VSCode or a Python IDE, the virtual environment may be activated automatically.
+(UNDER CONSTRUCTION)
