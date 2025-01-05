@@ -12,4 +12,9 @@ As for dependencies, they are all handled by [uv](https://github.com/astral-sh/u
 To run the bot, simply run `uv run python -m src.number_roller`.
 
 ### 🐋 Docker
-(UNDER CONSTRUCTION)
+You can also run this bot as a Docker container. Simply run the following Docker commands in the root directory:
+
+```
+docker build . -t number-roller
+docker run number-roller
+```
