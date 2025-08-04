@@ -1,23 +1,30 @@
 {
-  description = "Python dev shell with pyrefly and ruff";
+  description = "Python dev shell with pyrefly, ruff, and uv";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
   outputs =
-    { nixpkgs }:
-    let
-      pkgs = nixpkgs.legacyPackages.x86_64-linux;
-    in
+    { self, nixpkgs }:
     {
-      devShells.default = pkgs.mkShell {
-        buildInputs = [
-          pkgs.python313
-          pkgs.ruff
-          pkgs.pyrefly
-          pkgs.uv
-        ];
+      devShells = {
+        x86_64-linux =
+          let
+            pkgs = import nixpkgs {
+              system = "x86_64-linux";
+            };
+          in
+          {
+            default = pkgs.mkShell {
+              buildInputs = [
+                pkgs.python313
+                pkgs.uv
+                pkgs.ruff
+                pkgs.pyrefly
+              ];
+            };
+          };
       };
     };
 }

@@ -4,17 +4,20 @@ version = "1.0.0"
 description = "A Discord bot that rolls numbers on a schedule for you!"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = [
-    "aiocron>=2.1",
-    "audioop-lts>=0.2.1",
-    "py-cord>=2.6.1",
-    "pytz>=2025.2",
-]
+dependencies = ["aiocron>=2.1", "hikari>=2.1.0", "pytz>=2025.2"]
 
 [tool.uv]
-dev-dependencies = ["pytest>=8.4.1", "ruff>=0.12.7"]
+dev-dependencies = [
+    "pyrefly>=0.26.1",
+    "pytest>=8.4.1",
+ "ruff>=0.12.7",
+]
 
 [tool.ruff]
-select = ["E", "F", "W", "I", "N", "ANN", "B", "Q", "PTH", "SIM"]
-ignore = ["ANN002", "ANN003"]
+lint.select = ["E", "F", "W", "I", "N", "ANN", "B", "Q", "PTH", "SIM"]
+lint.ignore = ["ANN002", "ANN003"]
 line-length = 128
+
+[tool.pyrefly]
+project-includes = ["**/*"]
+project-excludes = ["**/*venv/**/*"]
