@@ -3,9 +3,9 @@ def generate_message(
         highest_number: int,
         lowest_number: int,
         default_message: str,
-        cond_messages: list[list[int, str, bool, bool]]
+        cond_messages: list[tuple[int, str, bool, bool]]
     ) -> str:
-    additional_message = default_message
+    additional_message: str = default_message
 
     for cm in cond_messages:
         if number == cm[0] or \
