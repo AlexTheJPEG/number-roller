@@ -25,6 +25,12 @@ _roll_job: aiocron.Cron | None = None
 
 
 async def roll() -> None:
+    """Roll numbers for each configured user and send the rendered message.
+
+    Returns:
+        None.
+    """
+
     settings = settings_reloader.snapshot()
 
     channel_id: int = settings["bot"]["channel"]
@@ -51,12 +57,31 @@ async def roll() -> None:
 
 
 def _schedule_roll_job(cron_expr: str, timezone_name: str) -> aiocron.Cron:
+    """Create and schedule the background cron job that triggers ``roll``.
+
+    Args:
+        cron_expr: POSIX cron expression describing when to run the job.
+        timezone_name: IANA timezone name used to interpret the cron expression.
+
+    Returns:
+        The scheduled ``aiocron`` job handle.
+    """
+
     tz = pytz.timezone(timezone_name)
     logger.info("Scheduling roll job with cron '%s' in timezone '%s'", cron_expr, timezone_name)
     return aiocron.crontab(cron_expr, func=roll, tz=tz)
 
 
 def _handle_settings_reload(updated_settings: dict[str, Any]) -> None:
+    """React to a hot settings update by reconfiguring the cron schedule if needed.
+
+    Args:
+        updated_settings: Fresh settings emitted by :class:`HotReloadingSettings`.
+
+    Returns:
+        None.
+    """
+
     global _roll_job, _current_schedule
 
     new_schedule = (
@@ -78,6 +103,15 @@ _roll_job = _schedule_roll_job(*_current_schedule)
 
 @bot.listen()
 async def on_started(_event: hikari.StartedEvent) -> None:
+    """Bootstrap the hot-reload watcher once the bot gateway is ready.
+
+    Args:
+        _event: The hikari ``StartedEvent`` dispatched by the gateway.
+
+    Returns:
+        None.
+    """
+
     logger.info("Bot is ready! Hot reload watcher running.")
     settings_reloader.start()
 

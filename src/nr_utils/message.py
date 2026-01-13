@@ -27,7 +27,19 @@ class MessageRule:
 
 
 def _parse_condition(condition_str: str, lowest_number: int, highest_number: int) -> Union[str, tuple[int, int]]:
-    """Parse a condition string into a usable condition."""
+    """Normalize a textual condition into a comparable value.
+
+    Args:
+        condition_str: The raw condition expression provided in the settings.
+        lowest_number: The minimum allowed number in the rolling range.
+        highest_number: The maximum allowed number in the rolling range.
+
+    Returns:
+        Either a validated comparison string (e.g., ``"=50"``) or a tuple representing an inclusive range.
+
+    Raises:
+        ValueError: If the condition cannot be parsed or falls outside the allowed bounds.
+    """
     # Handle keywords
     if condition_str.lower() in ["highest", "lowest"]:
         return condition_str.lower()
@@ -59,7 +71,17 @@ def _parse_condition(condition_str: str, lowest_number: int, highest_number: int
 
 
 def _evaluate_condition(condition: Union[str, tuple[int, int]], number: int, lowest_number: int, highest_number: int) -> bool:
-    """Evaluate whether a condition is met for the given number."""
+    """Determine whether a number satisfies a parsed condition.
+
+    Args:
+        condition: A comparison string or tuple produced by :func:`_parse_condition`.
+        number: The value produced for a particular user.
+        lowest_number: The minimum allowable roll.
+        highest_number: The maximum allowable roll.
+
+    Returns:
+        ``True`` if the supplied number matches the condition, ``False`` otherwise.
+    """
     if isinstance(condition, tuple):
         # Range condition
         min_val, max_val = condition
@@ -182,7 +204,17 @@ def generate_message(
 
 
 def load_rules_from_settings(settings: dict[str, Any]) -> list[MessageRule]:
-    """Load the supported MessageRule objects from the provided settings dict."""
+    """Build rule objects from a settings dictionary.
+
+    Args:
+        settings: The fully parsed TOML configuration loaded from disk.
+
+    Returns:
+        A list of :class:`MessageRule` instances that can be supplied to :func:`generate_message`.
+
+    Raises:
+        ValueError: If legacy ``cond_messages`` entries are present.
+    """
 
     message_settings = settings.get("message")
     if not isinstance(message_settings, dict):
@@ -228,4 +260,3 @@ def load_rules_from_settings(settings: dict[str, Any]) -> list[MessageRule]:
         )
 
     return rules
-

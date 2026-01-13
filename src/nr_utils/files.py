@@ -9,6 +9,15 @@ from typing import Any, Self
 
 
 def load_bot_settings(path: str | Path = "bot_settings.toml") -> dict[str, Any]:
+    """Load and parse the bot settings TOML file.
+
+    Args:
+        path: File system path to the TOML configuration. Defaults to ``bot_settings.toml``.
+
+    Returns:
+        The parsed TOML content as a nested dictionary.
+    """
+
     settings_path = Path(path)
     with settings_path.open("rb") as settings:
         return tomllib.load(settings)
@@ -18,6 +27,16 @@ class HotReloadingSettings:
     """Monitor bot_settings.toml for changes and publish updates."""
 
     def __init__(self: Self, path: str | Path = "bot_settings.toml", *, poll_interval: float = 1.0) -> None:
+        """Create a reloader tied to ``bot_settings.toml``.
+
+        Args:
+            path: Path to the configuration file that should be monitored.
+            poll_interval: Number of seconds to wait between modification checks.
+
+        Returns:
+            None.
+        """
+
         self._path = Path(path)
         self._poll_interval = poll_interval
         self._settings: dict[str, Any] = load_bot_settings(self._path)
@@ -27,17 +46,35 @@ class HotReloadingSettings:
         self._logger = logging.getLogger(__name__)
 
     def snapshot(self: Self) -> dict[str, Any]:
-        """Return the latest cached settings snapshot."""
+        """Return the most recently loaded settings.
+
+        Returns:
+            The cached settings dictionary representing the latest successful reload.
+        """
 
         return self._settings
 
     def add_listener(self: Self, listener: Callable[[dict[str, Any]], Awaitable[None] | None]) -> None:
-        """Register a callback that is invoked after each successful reload."""
+        """Register a callback invoked after each successful reload.
+
+        Args:
+            listener: A callable that receives the new settings and may return ``None`` or an awaitable.
+
+        Returns:
+            None.
+        """
 
         self._listeners.append(listener)
 
     def start(self: Self, loop: asyncio.AbstractEventLoop | None = None) -> None:
-        """Begin polling for file changes."""
+        """Begin polling for file changes.
+
+        Args:
+            loop: Optional event loop to schedule the background polling task on. Defaults to ``asyncio.get_running_loop()``.
+
+        Returns:
+            None.
+        """
 
         if self._task is not None:
             return
@@ -48,7 +85,11 @@ class HotReloadingSettings:
         self._task = loop.create_task(self._watch_loop())
 
     async def stop(self: Self) -> None:
-        """Stop polling for file changes."""
+        """Stop polling for file changes.
+
+        Returns:
+            None.
+        """
 
         if self._task is None:
             return
@@ -60,6 +101,12 @@ class HotReloadingSettings:
             await task
 
     async def _watch_loop(self: Self) -> None:
+        """Internal polling loop that keeps the watcher alive.
+
+        Returns:
+            None.
+        """
+
         try:
             while True:
                 await asyncio.sleep(self._poll_interval)
@@ -69,6 +116,12 @@ class HotReloadingSettings:
             return
 
     def _refresh_from_disk(self: Self) -> bool:
+        """Reload the TOML file if its modification time changed.
+
+        Returns:
+            ``True`` if a fresh snapshot was loaded; ``False`` otherwise.
+        """
+
         try:
             current_mtime = self._path.stat().st_mtime_ns
         except FileNotFoundError:
@@ -89,6 +142,12 @@ class HotReloadingSettings:
         return True
 
     async def _notify_listeners(self: Self) -> None:
+        """Invoke registered listeners with the current settings snapshot.
+
+        Returns:
+            None.
+        """
+
         for listener in self._listeners:
             result = listener(self._settings)
             if inspect.isawaitable(result):
