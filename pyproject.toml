@@ -1,6 +1,6 @@
 [project]
 name = "number-roller"
-version = "1.0.0"
+version = "2.0.0"
 description = "A Discord bot that rolls numbers on a schedule for you!"
 readme = "README.md"
 requires-python = ">=3.13"
