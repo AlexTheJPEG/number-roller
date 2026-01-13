@@ -27,21 +27,33 @@ number_message = "Your number is {number}."
 # The default message that is appended after the number message
 default_message = "Cool!"
 
-# Add specific messages for certain numbers in the following format:
-# [number, message, be the only message?, stop checking?]
-# - Messages are checked starting from the first item in the list.
-# - If the roll is not equal to the number, it moves on to the next.
-# - If the roll is equal to the number, print the desired message.
-#     - If "be the only message?" is true, it will remove any other existing messages so far.
-#     - If "stop checking?" is true, the bot will stop processing conditional messages.
-cond_messages = [
-    [1, "Unlucky!", true, true],
-    [69, "Nice.", false, false],
-    [1000, "Lucky!", true, true]
-    ["highest", "You have the highest number.", false, true]
-    ["lowest", "You have the lowest number.", false, true]
-]
-# To get an idea of what these would print:
-# - "Your number is 1. Unlucky!"
-# - "Your number is 69. Nice. (You have the highest/lowest number.)"
-# - "Your number is 1000. Lucky!"
+# Message rules use the [[message.rules]] tables below.
+# Supported conditions: =, !=, >, >=, <, <=, ranges written as "1-10",
+# or the keywords "highest" / "lowest". See README for additional details.
+
+[[message.rules]]
+condition = "=1"
+message = "Unlucky!"
+mode = "replace_all"
+stop_on_trigger = true
+
+[[message.rules]]
+condition = "=69"
+message = "Nice."
+mode = "add"
+
+[[message.rules]]
+condition = "=1000"
+message = "Lucky!"
+mode = "replace_all"
+stop_on_trigger = true
+
+[[message.rules]]
+condition = "highest"
+message = "You have the highest number."
+stop_on_trigger = true
+
+[[message.rules]]
+condition = "lowest"
+message = "You have the lowest number."
+stop_on_trigger = true
