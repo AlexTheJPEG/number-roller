@@ -7,6 +7,7 @@ import pytz
 
 from ..nr_utils.files import load_bot_settings
 from ..nr_utils.message import generate_message
+from ..nr_utils.migrate import load_rules_from_settings
 
 settings: dict[str, Any] = load_bot_settings()
 bot: hikari.GatewayBot = hikari.GatewayBot(token=settings["bot"]["token"])
@@ -26,7 +27,8 @@ async def roll() -> None:
     lowest_number: int = min(numbers)
     highest_number: int = max(numbers)
 
-    cond_messages: list[tuple[int, str, bool, bool]] = settings["message"]["cond_messages"]
+    # Load message rules (supports both new and legacy formats)
+    rules = load_rules_from_settings(settings)
 
     for index in range(len(users)):
         number: int = numbers[index]
@@ -34,7 +36,7 @@ async def roll() -> None:
         number_message: str = settings["message"]["number_message"].replace(r"{number}", str(number))
 
         default_message: str = settings["message"]["default_message"]
-        additional_message: str = generate_message(number, highest_number, lowest_number, default_message, cond_messages)
+        additional_message: str = generate_message(number, lowest_number, highest_number, default_message, rules)
 
         await bot.rest.create_message(channel_id, f"<@{users[index]}> {number_message} {additional_message}")
 

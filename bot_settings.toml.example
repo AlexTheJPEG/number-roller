@@ -27,6 +27,7 @@ number_message = "Your number is {number}."
 # The default message that is appended after the number message
 default_message = "Cool!"
 
+# Legacy format (still supported):
 # Add specific messages for certain numbers in the following format:
 # [number, message, be the only message?, stop checking?]
 # - Messages are checked starting from the first item in the list.
@@ -37,10 +38,34 @@ default_message = "Cool!"
 cond_messages = [
     [1, "Unlucky!", true, true],
     [69, "Nice.", false, false],
-    [1000, "Lucky!", true, true]
-    ["highest", "You have the highest number.", false, true]
+    [1000, "Lucky!", true, true],
+    ["highest", "You have the highest number.", false, true],
     ["lowest", "You have the lowest number.", false, true]
 ]
+
+# New advanced format (optional, for more complex rules):
+# To use the new advanced message system, you can define rules like this:
+#
+# [[message.rules]]
+# condition = "=69"              # Supports: =, !=, >, >=, <, <=, ranges (1-100), or keywords (highest/lowest)
+# message = "Nice!"
+# mode = "add"                   # Options: "add", "replace_last", "replace_except_default", "replace_all"
+# stop_on_trigger = false        # Stop processing more rules if this triggers
+# jump_to_rule = 3               # Skip to rule index 3 if this triggers (optional)
+# mutually_exclusive = [2, 4]    # Don't process rules 2 and 4 if this triggers (optional)
+#
+# Examples:
+# [[message.rules]]
+# condition = ">=90"
+# message = "High roll!"
+# mode = "add"
+#
+# [[message.rules]]
+# condition = "1-10"
+# message = "Low roll."
+# mode = "replace_all"
+# stop_on_trigger = true
+#
 # To get an idea of what these would print:
 # - "Your number is 1. Unlucky!"
 # - "Your number is 69. Nice. (You have the highest/lowest number.)"

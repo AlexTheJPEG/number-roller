@@ -4,7 +4,12 @@ version = "1.0.0"
 description = "A Discord bot that rolls numbers on a schedule for you!"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = ["aiocron>=2.1", "hikari>=2.1.0", "pytz>=2025.2"]
+dependencies = [
+    "aiocron>=2.1",
+    "hikari>=2.1.0",
+    "pytz>=2025.2",
+    "tomli-w>=1.0.0",
+]
 
 [dependency-groups]
 dev = [
