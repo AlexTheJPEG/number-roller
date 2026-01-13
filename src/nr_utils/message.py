@@ -209,11 +209,7 @@ def load_rules_from_settings(settings: dict[str, Any]) -> list[MessageRule]:
             continue
 
         normalized_condition: Union[str, tuple[int, int]]
-        if isinstance(condition, list):
-            if len(condition) != 2:
-                continue
-            normalized_condition = (int(condition[0]), int(condition[1]))
-        elif isinstance(condition, tuple):
+        if isinstance(condition, (list, tuple)):
             if len(condition) != 2:
                 continue
             normalized_condition = (int(condition[0]), int(condition[1]))

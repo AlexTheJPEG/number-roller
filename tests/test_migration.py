@@ -1,10 +1,12 @@
+from typing import Self
+
 import pytest
 
 from src.nr_utils.message import MessageRule, load_rules_from_settings
 
 
 class TestLoadRulesFromSettings:
-    def test_loads_new_format_rules(self):
+    def test_loads_new_format_rules(self: Self) -> None:
         settings = {
             "message": {
                 "rules": [
@@ -36,17 +38,17 @@ class TestLoadRulesFromSettings:
         assert rules[1].jump_to_rule == 3
         assert rules[1].mutually_exclusive == [2]
 
-    def test_returns_empty_without_message_section(self):
+    def test_returns_empty_without_message_section(self: Self) -> None:
         settings = {"bot": {"token": "abc123"}}
         rules = load_rules_from_settings(settings)
         assert rules == []
 
-    def test_returns_empty_when_rules_missing(self):
+    def test_returns_empty_when_rules_missing(self: Self) -> None:
         settings = {"message": {}}
         rules = load_rules_from_settings(settings)
         assert rules == []
 
-    def test_list_conditions_become_tuples(self):
+    def test_list_conditions_become_tuples(self: Self) -> None:
         settings = {
             "message": {
                 "rules": [
@@ -66,7 +68,7 @@ class TestLoadRulesFromSettings:
         assert rules[0].condition == (1, 5)
         assert rules[0].mode == "replace_all"
 
-    def test_invalid_rule_entries_are_skipped(self):
+    def test_invalid_rule_entries_are_skipped(self: Self) -> None:
         settings = {
             "message": {
                 "rules": [
@@ -85,7 +87,7 @@ class TestLoadRulesFromSettings:
         assert len(rules) == 1
         assert rules[0].message == "Valid"
 
-    def test_cond_messages_key_raises(self):
+    def test_cond_messages_key_raises(self: Self) -> None:
         settings = {
             "message": {
                 "cond_messages": [

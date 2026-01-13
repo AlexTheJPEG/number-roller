@@ -1,9 +1,16 @@
+from __future__ import annotations
+
+from typing import Self, TypeAlias
+
 import pytest
-from src.nr_utils.message import generate_message, MessageRule
+
+from src.nr_utils.message import MessageRule, generate_message
+
+RangeFixture: TypeAlias = tuple[int, int, str]
 
 
 @pytest.fixture
-def basic_range():
+def basic_range() -> RangeFixture:
     """Basic test range and default message."""
     return 1, 100, "Default message"
 
@@ -11,12 +18,12 @@ def basic_range():
 class TestBasicFunctionality:
     """Test basic message generation functionality."""
 
-    def test_empty_rules_returns_default(self, basic_range):
+    def test_empty_rules_returns_default(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         result = generate_message(50, lowest, highest, default, [])
         assert result == default
 
-    def test_empty_default_and_rules_returns_empty(self, basic_range):
+    def test_empty_default_and_rules_returns_empty(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, _ = basic_range
         result = generate_message(50, lowest, highest, "", [])
         assert result == ""
@@ -25,25 +32,25 @@ class TestBasicFunctionality:
 class TestComparisons:
     """Test comparison conditions (=, !=, >, >=, <, <=)."""
 
-    def test_exact_match_comparison(self, basic_range):
+    def test_exact_match_comparison(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [MessageRule(condition="=50", message="Exact match")]
         result = generate_message(50, lowest, highest, default, rules)
         assert result == "Default message Exact match"
 
-    def test_not_equal_comparison(self, basic_range):
+    def test_not_equal_comparison(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [MessageRule(condition="!=50", message="Not fifty")]
         result = generate_message(25, lowest, highest, default, rules)
         assert result == "Default message Not fifty"
 
-    def test_greater_than_comparison(self, basic_range):
+    def test_greater_than_comparison(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [MessageRule(condition=">50", message="Greater than fifty")]
         result = generate_message(75, lowest, highest, default, rules)
         assert result == "Default message Greater than fifty"
 
-    def test_greater_than_or_equal_comparison(self, basic_range):
+    def test_greater_than_or_equal_comparison(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [MessageRule(condition=">=50", message="At least fifty")]
 
@@ -55,13 +62,13 @@ class TestComparisons:
         result = generate_message(75, lowest, highest, default, rules)
         assert result == "Default message At least fifty"
 
-    def test_less_than_comparison(self, basic_range):
+    def test_less_than_comparison(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [MessageRule(condition="<50", message="Less than fifty")]
         result = generate_message(25, lowest, highest, default, rules)
         assert result == "Default message Less than fifty"
 
-    def test_less_than_or_equal_comparison(self, basic_range):
+    def test_less_than_or_equal_comparison(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [MessageRule(condition="<=50", message="At most fifty")]
 
@@ -73,7 +80,7 @@ class TestComparisons:
         result = generate_message(25, lowest, highest, default, rules)
         assert result == "Default message At most fifty"
 
-    def test_comparison_out_of_bounds_ignored(self, basic_range):
+    def test_comparison_out_of_bounds_ignored(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         # This should be ignored due to being out of bounds
         rules = [MessageRule(condition="=200", message="Should be ignored")]
@@ -84,13 +91,13 @@ class TestComparisons:
 class TestRanges:
     """Test range conditions (e.g., 1-100)."""
 
-    def test_number_in_range(self, basic_range):
+    def test_number_in_range(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [MessageRule(condition="25-75", message="In middle range")]
         result = generate_message(50, lowest, highest, default, rules)
         assert result == "Default message In middle range"
 
-    def test_number_at_range_boundaries(self, basic_range):
+    def test_number_at_range_boundaries(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [MessageRule(condition="25-75", message="In range")]
 
@@ -102,13 +109,13 @@ class TestRanges:
         result = generate_message(75, lowest, highest, default, rules)
         assert result == "Default message In range"
 
-    def test_number_outside_range(self, basic_range):
+    def test_number_outside_range(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [MessageRule(condition="25-75", message="In range")]
         result = generate_message(10, lowest, highest, default, rules)
         assert result == default
 
-    def test_range_out_of_bounds_ignored(self, basic_range):
+    def test_range_out_of_bounds_ignored(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         # This should be ignored due to being out of bounds
         rules = [MessageRule(condition="50-200", message="Should be ignored")]
@@ -119,19 +126,19 @@ class TestRanges:
 class TestKeywords:
     """Test highest and lowest keywords."""
 
-    def test_highest_keyword(self, basic_range):
+    def test_highest_keyword(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [MessageRule(condition="highest", message="Maximum value")]
         result = generate_message(highest, lowest, highest, default, rules)
         assert result == "Default message Maximum value"
 
-    def test_lowest_keyword(self, basic_range):
+    def test_lowest_keyword(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [MessageRule(condition="lowest", message="Minimum value")]
         result = generate_message(lowest, lowest, highest, default, rules)
         assert result == "Default message Minimum value"
 
-    def test_highest_keyword_case_insensitive(self, basic_range):
+    def test_highest_keyword_case_insensitive(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [MessageRule(condition="HIGHEST", message="Maximum value")]
         result = generate_message(highest, lowest, highest, default, rules)
@@ -141,7 +148,7 @@ class TestKeywords:
 class TestMessageModes:
     """Test different message modes."""
 
-    def test_add_mode(self, basic_range):
+    def test_add_mode(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition="=50", message="First", mode="add"),
@@ -150,7 +157,7 @@ class TestMessageModes:
         result = generate_message(50, lowest, highest, default, rules)
         assert result == "Default message First Second"
 
-    def test_replace_last_mode(self, basic_range):
+    def test_replace_last_mode(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition="=50", message="First", mode="add"),
@@ -160,7 +167,7 @@ class TestMessageModes:
         result = generate_message(50, lowest, highest, default, rules)
         assert result == "Default message First Third"
 
-    def test_replace_except_default_mode(self, basic_range):
+    def test_replace_except_default_mode(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition="=50", message="First", mode="add"),
@@ -170,7 +177,7 @@ class TestMessageModes:
         result = generate_message(50, lowest, highest, default, rules)
         assert result == "Default message Third"
 
-    def test_replace_all_mode(self, basic_range):
+    def test_replace_all_mode(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition="=50", message="First", mode="add"),
@@ -180,7 +187,7 @@ class TestMessageModes:
         result = generate_message(50, lowest, highest, default, rules)
         assert result == "Third"
 
-    def test_replace_last_on_empty_queue(self, basic_range):
+    def test_replace_last_on_empty_queue(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, _ = basic_range
         rules = [MessageRule(condition="=50", message="Only message", mode="replace_last")]
         result = generate_message(50, lowest, highest, "", rules)
@@ -190,7 +197,7 @@ class TestMessageModes:
 class TestStopOnTrigger:
     """Test stop_on_trigger functionality."""
 
-    def test_stop_on_trigger_halts_processing(self, basic_range):
+    def test_stop_on_trigger_halts_processing(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition="=50", message="First", stop_on_trigger=True),
@@ -199,7 +206,7 @@ class TestStopOnTrigger:
         result = generate_message(50, lowest, highest, default, rules)
         assert result == "Default message First"
 
-    def test_stop_on_trigger_only_affects_matching_rules(self, basic_range):
+    def test_stop_on_trigger_only_affects_matching_rules(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition="=40", message="First"),
@@ -213,7 +220,7 @@ class TestStopOnTrigger:
 class TestJumpToRule:
     """Test jump_to_rule functionality."""
 
-    def test_jump_to_rule_skips_intermediate_rules(self, basic_range):
+    def test_jump_to_rule_skips_intermediate_rules(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition="=50", message="First", jump_to_rule=2),
@@ -223,7 +230,7 @@ class TestJumpToRule:
         result = generate_message(50, lowest, highest, default, rules)
         assert result == "Default message First Third"
 
-    def test_jump_to_rule_invalid_index_ignored(self, basic_range):
+    def test_jump_to_rule_invalid_index_ignored(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition="=50", message="First", jump_to_rule=10),
@@ -232,7 +239,7 @@ class TestJumpToRule:
         result = generate_message(50, lowest, highest, default, rules)
         assert result == "Default message First"
 
-    def test_jump_backwards_ignored(self, basic_range):
+    def test_jump_backwards_ignored(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition="=50", message="First"),
@@ -245,7 +252,7 @@ class TestJumpToRule:
 class TestMutualExclusion:
     """Test mutually_exclusive functionality."""
 
-    def test_mutually_exclusive_rules_skipped(self, basic_range):
+    def test_mutually_exclusive_rules_skipped(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition="=50", message="First", mutually_exclusive=[1, 2]),
@@ -256,7 +263,7 @@ class TestMutualExclusion:
         result = generate_message(50, lowest, highest, default, rules)
         assert result == "Default message First Fourth"
 
-    def test_mutually_exclusive_invalid_indices_ignored(self, basic_range):
+    def test_mutually_exclusive_invalid_indices_ignored(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition="=50", message="First", mutually_exclusive=[10, 20]),
@@ -265,7 +272,7 @@ class TestMutualExclusion:
         result = generate_message(50, lowest, highest, default, rules)
         assert result == "Default message First Second"
 
-    def test_mutually_exclusive_backwards_indices_ignored(self, basic_range):
+    def test_mutually_exclusive_backwards_indices_ignored(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition="=40", message="First"),
@@ -278,7 +285,7 @@ class TestMutualExclusion:
 class TestComplexScenarios:
     """Test complex scenarios combining multiple features."""
 
-    def test_complex_rule_interaction(self, basic_range):
+    def test_complex_rule_interaction(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition=">=40", message="At least 40"),
@@ -290,7 +297,7 @@ class TestComplexScenarios:
         result = generate_message(50, lowest, highest, default, rules)
         assert result == "Default message At least 40 Exactly 50 At most 60 Greater than 45"
 
-    def test_jump_with_mutual_exclusion(self, basic_range):
+    def test_jump_with_mutual_exclusion(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition="=50", message="First", jump_to_rule=3, mutually_exclusive=[1, 2]),
@@ -301,7 +308,7 @@ class TestComplexScenarios:
         result = generate_message(50, lowest, highest, default, rules)
         assert result == "Default message First Jumped to"
 
-    def test_multiple_message_modes(self, basic_range):
+    def test_multiple_message_modes(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition=">=40", message="First", mode="add"),
@@ -315,7 +322,7 @@ class TestComplexScenarios:
 class TestEdgeCases:
     """Test edge cases and error conditions."""
 
-    def test_number_out_of_bounds_raises_error(self, basic_range):
+    def test_number_out_of_bounds_raises_error(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = []
 
@@ -325,7 +332,7 @@ class TestEdgeCases:
         with pytest.raises(ValueError, match="outside bounds"):
             generate_message(101, lowest, highest, default, rules)
 
-    def test_invalid_condition_format_ignored(self, basic_range):
+    def test_invalid_condition_format_ignored(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition="invalid", message="Should be ignored"),
@@ -334,20 +341,20 @@ class TestEdgeCases:
         result = generate_message(50, lowest, highest, default, rules)
         assert result == "Default message Valid rule"
 
-    def test_empty_message_in_rule(self, basic_range):
+    def test_empty_message_in_rule(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [MessageRule(condition="=50", message="")]
         result = generate_message(50, lowest, highest, default, rules)
         assert result == default  # Empty messages get filtered out
 
-    def test_whitespace_only_messages_handled(self, basic_range):
+    def test_whitespace_only_messages_handled(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [MessageRule(condition="=50", message="   ")]
         result = generate_message(50, lowest, highest, default, rules)
         # Should be filtered out, leaving only default
         assert result == default
 
-    def test_zero_and_negative_numbers(self):
+    def test_zero_and_negative_numbers(self: Self) -> None:
         lowest, highest, default = -10, 10, "Default"
         rules = [
             MessageRule(condition="=0", message="Zero"),
@@ -368,7 +375,7 @@ class TestEdgeCases:
 class TestBoundaryValidation:
     """Test boundary validation for conditions."""
 
-    def test_comparison_boundary_validation(self):
+    def test_comparison_boundary_validation(self: Self) -> None:
         lowest, highest, default = 10, 90, "Default"
 
         # Valid conditions
@@ -384,7 +391,7 @@ class TestBoundaryValidation:
         result = generate_message(50, lowest, highest, default, rules)
         assert result == default
 
-    def test_range_boundary_validation(self):
+    def test_range_boundary_validation(self: Self) -> None:
         lowest, highest, default = 10, 90, "Default"
 
         # Valid range
@@ -404,7 +411,7 @@ class TestBoundaryValidation:
 class TestRuleIndexing:
     """Test rule indexing for jumps and mutual exclusion."""
 
-    def test_rule_indices_are_zero_based(self, basic_range):
+    def test_rule_indices_are_zero_based(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition="=50", message="Rule 0", jump_to_rule=2),
@@ -414,7 +421,7 @@ class TestRuleIndexing:
         result = generate_message(50, lowest, highest, default, rules)
         assert result == "Default message Rule 0 Rule 2"
 
-    def test_mutual_exclusion_indices_are_zero_based(self, basic_range):
+    def test_mutual_exclusion_indices_are_zero_based(self: Self, basic_range: RangeFixture) -> None:
         lowest, highest, default = basic_range
         rules = [
             MessageRule(condition="=50", message="Rule 0", mutually_exclusive=[1]),

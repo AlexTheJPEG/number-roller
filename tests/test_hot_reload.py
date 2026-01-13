@@ -1,5 +1,7 @@
 import asyncio
+from pathlib import Path
 from textwrap import dedent
+from typing import Any
 
 from src.nr_utils.files import HotReloadingSettings, load_bot_settings
 
@@ -25,7 +27,7 @@ def _render_settings(channel: int = 123, cron: str = "0 9 * * *") -> str:
     ).strip()
 
 
-def test_load_bot_settings_accepts_custom_path(tmp_path):
+def test_load_bot_settings_accepts_custom_path(tmp_path: Path) -> None:
     settings_path = tmp_path / "custom_settings.toml"
     settings_path.write_text(_render_settings(channel=999), encoding="utf-8")
 
@@ -34,7 +36,7 @@ def test_load_bot_settings_accepts_custom_path(tmp_path):
     assert loaded["bot"]["channel"] == 999
 
 
-def test_hot_reloading_settings_notifies_on_change(tmp_path):
+def test_hot_reloading_settings_notifies_on_change(tmp_path: Path) -> None:
     settings_path = tmp_path / "bot_settings.toml"
     settings_path.write_text(_render_settings(channel=1), encoding="utf-8")
 
@@ -43,7 +45,7 @@ def test_hot_reloading_settings_notifies_on_change(tmp_path):
         notifications: list[int] = []
         change_event = asyncio.Event()
 
-        def _listener(data):
+        def _listener(data: dict[str, Any]) -> None:
             notifications.append(data["bot"]["channel"])
             change_event.set()
 
