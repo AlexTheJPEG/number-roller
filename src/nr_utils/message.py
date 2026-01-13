@@ -1,6 +1,6 @@
 import re
 from dataclasses import dataclass
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 
 @dataclass
@@ -180,4 +180,56 @@ def generate_message(
     # Join all messages with spaces, filtering out empty strings
     return " ".join(msg for msg in message_queue if msg).strip()
 
+
+def load_rules_from_settings(settings: dict[str, Any]) -> list[MessageRule]:
+    """Load the supported MessageRule objects from the provided settings dict."""
+
+    message_settings = settings.get("message")
+    if not isinstance(message_settings, dict):
+        return []
+
+    if "cond_messages" in message_settings:
+        raise ValueError(
+            "Legacy message rules ('cond_messages') are no longer supported."
+            " Please migrate to [[message.rules]] entries."
+        )
+
+    rules_config = message_settings.get("rules")
+    if not isinstance(rules_config, list):
+        return []
+
+    rules: list[MessageRule] = []
+    for rule_dict in rules_config:
+        if not isinstance(rule_dict, dict):
+            continue
+
+        condition = rule_dict.get("condition")
+        message = rule_dict.get("message")
+        if condition is None or message is None:
+            continue
+
+        normalized_condition: Union[str, tuple[int, int]]
+        if isinstance(condition, list):
+            if len(condition) != 2:
+                continue
+            normalized_condition = (int(condition[0]), int(condition[1]))
+        elif isinstance(condition, tuple):
+            if len(condition) != 2:
+                continue
+            normalized_condition = (int(condition[0]), int(condition[1]))
+        else:
+            normalized_condition = str(condition)
+
+        rules.append(
+            MessageRule(
+                condition=normalized_condition,
+                message=str(message),
+                mode=rule_dict.get("mode", "add"),
+                stop_on_trigger=rule_dict.get("stop_on_trigger", False),
+                jump_to_rule=rule_dict.get("jump_to_rule"),
+                mutually_exclusive=rule_dict.get("mutually_exclusive"),
+            )
+        )
+
+    return rules
 

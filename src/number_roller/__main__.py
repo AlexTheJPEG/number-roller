@@ -9,8 +9,7 @@ import hikari
 import pytz
 
 from ..nr_utils.files import HotReloadingSettings
-from ..nr_utils.message import generate_message
-from ..nr_utils.migrate import load_rules_from_settings
+from ..nr_utils.message import generate_message, load_rules_from_settings
 
 logger = logging.getLogger(__name__)
 
