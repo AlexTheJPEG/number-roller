@@ -20,7 +20,6 @@ docker run number-roller
 ```
 
 ## 🧩 Message rules
-
 Messages are customized with `[[message.rules]]` tables inside `bot_settings.toml`. Each
 rule is evaluated in order, sharing the following fields:
 
