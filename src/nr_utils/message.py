@@ -26,7 +26,7 @@ class MessageRule:
     mutually_exclusive: Optional[list[int]] = None
 
 
-def _parse_condition(condition_str: str, lowest_number: int, highest_number: int) -> Union[str, tuple[int, int]]:
+def _parse_condition(condition_str: str, allowed_lowest: int, allowed_highest: int) -> Union[str, tuple[int, int]]:
     """Normalize a textual condition into a comparable value.
 
     Args:
@@ -50,8 +50,8 @@ def _parse_condition(condition_str: str, lowest_number: int, highest_number: int
         min_val, max_val = int(range_match.group(1)), int(range_match.group(2))
 
         # Validate range is within bounds
-        if min_val < lowest_number or max_val > highest_number:
-            raise ValueError(f"Range {min_val}-{max_val} is outside bounds {lowest_number}-{highest_number}")
+        if min_val < allowed_lowest or max_val > allowed_highest:
+            raise ValueError(f"Range {min_val}-{max_val} is outside bounds {allowed_lowest}-{allowed_highest}")
 
         return (min_val, max_val)
 
@@ -62,8 +62,8 @@ def _parse_condition(condition_str: str, lowest_number: int, highest_number: int
         value = int(value_str)
 
         # Validate value is within bounds
-        if value < lowest_number or value > highest_number:
-            raise ValueError(f"Comparison value {value} is outside bounds {lowest_number}-{highest_number}")
+        if value < allowed_lowest or value > allowed_highest:
+            raise ValueError(f"Comparison value {value} is outside bounds {allowed_lowest}-{allowed_highest}")
 
         return condition_str
 
@@ -114,24 +114,38 @@ def _evaluate_condition(condition: Union[str, tuple[int, int]], number: int, low
 
 
 def generate_message(
-    number: int, lowest_number: int, highest_number: int, default_message: str, rules: list[MessageRule]
+    number: int,
+    allowed_lowest: int,
+    allowed_highest: int,
+    default_message: str,
+    rules: list[MessageRule],
+    *,
+    roll_lowest: Optional[int] = None,
+    roll_highest: Optional[int] = None,
 ) -> str:
     """
     Generate a message based on the given number and rules.
 
     Args:
         number: The number to generate a message for
-        lowest_number: The lowest possible number
-        highest_number: The highest possible number
+        allowed_lowest: The lowest possible configured number
+        allowed_highest: The highest possible configured number
         default_message: The default message
         rules: List of MessageRule objects to process
+        roll_lowest: Optional lowest actual roll in the batch (used for "lowest" keyword)
+        roll_highest: Optional highest actual roll in the batch (used for "highest" keyword)
 
     Returns:
         The generated message string
     """
     # Validate input number is within bounds
-    if not (lowest_number <= number <= highest_number):
-        raise ValueError(f"Number {number} is outside bounds {lowest_number}-{highest_number}")
+    if not (allowed_lowest <= number <= allowed_highest):
+        raise ValueError(f"Number {number} is outside bounds {allowed_lowest}-{allowed_highest}")
+
+    effective_lowest = roll_lowest if roll_lowest is not None else allowed_lowest
+    effective_highest = roll_highest if roll_highest is not None else allowed_highest
+    effective_lowest = max(allowed_lowest, effective_lowest)
+    effective_highest = min(allowed_highest, effective_highest)
 
     # Track which rules have been excluded due to mutual exclusion
     excluded_rules = set()
@@ -152,11 +166,11 @@ def generate_message(
         try:
             # Parse and evaluate the condition
             parsed_condition = (
-                _parse_condition(rule.condition, lowest_number, highest_number)
+                _parse_condition(rule.condition, allowed_lowest, allowed_highest)
                 if isinstance(rule.condition, str)
                 else rule.condition
             )
-            condition_met = _evaluate_condition(parsed_condition, number, lowest_number, highest_number)
+            condition_met = _evaluate_condition(parsed_condition, number, effective_lowest, effective_highest)
         except ValueError:
             # Skip invalid conditions
             rule_index += 1

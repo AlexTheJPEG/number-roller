@@ -36,10 +36,10 @@ async def roll() -> None:
     channel_id: int = settings["bot"]["channel"]
     users: list[int] = settings["bot"]["users"]
 
-    numbers: list[int] = [
-        random.randint(settings["roll"]["min_number"], settings["roll"]["max_number"])
-        for _ in users
-    ]
+    min_number = settings["roll"]["min_number"]
+    max_number = settings["roll"]["max_number"]
+
+    numbers: list[int] = [random.randint(min_number, max_number) for _ in users]
     lowest_number: int = min(numbers)
     highest_number: int = max(numbers)
 
@@ -51,7 +51,15 @@ async def roll() -> None:
         number_message: str = settings["message"]["number_message"].replace(r"{number}", str(number))
 
         default_message: str = settings["message"]["default_message"]
-        additional_message: str = generate_message(number, lowest_number, highest_number, default_message, rules)
+        additional_message: str = generate_message(
+            number,
+            min_number,
+            max_number,
+            default_message,
+            rules,
+            roll_lowest=lowest_number,
+            roll_highest=highest_number,
+        )
 
         await bot.rest.create_message(channel_id, f"<@{user_id}> {number_message} {additional_message}")
 
